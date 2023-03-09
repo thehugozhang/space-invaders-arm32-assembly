@@ -37,174 +37,26 @@ inf_loop:
 	// ENEMY1 CONFIGURATION //
 	//////////////////////////
 	
-	ldr r0, =enemy1
-	mov r1, #22
-	mov r2, #64
-	bl BitBlit
-	
-	ldr r0, =enemy1
-	mov r1, #57
-	mov r2, #64
-	bl BitBlit
-	
-	ldr r0, =enemy1
-	mov r1, #91
-	mov r2, #64
-	bl BitBlit
-	
-	ldr r0, =enemy1
-	mov r1, #126
-	mov r2, #64
-	bl BitBlit
-	
-	ldr r0, =enemy1
-	mov r1, #160
-	mov r2, #64
-	bl BitBlit
-	
-	ldr r0, =enemy1
-	mov r1, #194
-	mov r2, #64
-	bl BitBlit
-	
-	ldr r0, =enemy1
-	mov r1, #229
-	mov r2, #64
-	bl BitBlit
-	
-	ldr r0, =enemy1
-	ldr r1,=#263
-	mov r2, #64
-	bl BitBlit
-	
-	ldr r0, =enemy1
-	ldr r1,=#298
-	mov r2, #64
-	bl BitBlit
-	
+    ldr r0, =enemy1
+    ldr r1, =enemy1_controls
+    bl drawFirstEnemies
+
 	//////////////////////////
 	// ENEMY2 CONFIGURATION //
 	//////////////////////////
-	
-	ldr r0, =enemy2
-	mov r1, #21
-	mov r2, #40
-	bl BitBlit
-		
-	ldr r0, =enemy2
-	mov r1, #52
-	mov r2, #40
-	bl BitBlit	
-	
-	ldr r0, =enemy2
-	mov r1, #83
-	mov r2, #40
-	bl BitBlit
-	
-	ldr r0, =enemy2
-	mov r1, #114
-	mov r2, #40
-	bl BitBlit
-		
-	ldr r0, =enemy2
-	mov r1, #145
-	mov r2, #40
-	bl BitBlit
-		
-	ldr r0, =enemy2
-	mov r1, #175
-	mov r2, #40
-	bl BitBlit
-		
-	ldr r0, =enemy2
-	mov r1, #206
-	mov r2, #40
-	bl BitBlit
-	
-	ldr r0, =enemy2
-	mov r1, #237
-	mov r2, #40
-	bl BitBlit
-		
-	ldr r0, =enemy2
-	mov r1, #268
-	mov r2, #40
-	bl BitBlit
-		
-	ldr r0, =enemy2
-	ldr r1,=#299
-	mov r2, #40
-	bl BitBlit
-	
+
+    ldr r0, =enemy2
+    ldr r1, =enemy2_controls
+    bl drawSecondEnemies
+
 	//////////////////////////
 	// ENEMY3 CONFIGURATION //
 	//////////////////////////
 	
-	ldr r0, =enemy3
-	mov r1, #16
-	mov r2, #16
-	bl BitBlit
-	
-	ldr r0, =enemy3
-	mov r1, #40
-	mov r2, #16
-	bl BitBlit
-	
-	ldr r0, =enemy3
-	mov r1, #64
-	mov r2, #16
-	bl BitBlit	
-	
-	ldr r0, =enemy3
-	mov r1, #88
-	mov r2, #16
-	bl BitBlit	
-	
-	ldr r0, =enemy3
-	mov r1, #112
-	mov r2, #16
-	bl BitBlit	
-	
-	ldr r0, =enemy3
-	mov r1, #136
-	mov r2, #16
-	bl BitBlit	
-	
-	ldr r0, =enemy3
-	mov r1, #160
-	mov r2, #16
-	bl BitBlit	
-	
-	ldr r0, =enemy3
-	mov r1, #184
-	mov r2, #16
-	bl BitBlit	
-	
-	ldr r0, =enemy3
-	mov r1, #208
-	mov r2, #16
-	bl BitBlit	
-	
-	ldr r0, =enemy3
-	mov r1, #232
-	mov r2, #16
-	bl BitBlit	
-	
-	ldr r0, =enemy3
-	mov r1, #256
-	mov r2, #16
-	bl BitBlit	
-	
-	ldr r0, =enemy3
-	mov r1, #280
-	mov r2, #16
-	bl BitBlit	
-	
-	ldr r0, =enemy3
-	mov r1, #304
-	mov r2, #16
-	bl BitBlit
-	
+    ldr r0, =enemy3
+    ldr r1, =enemy3_controls
+    bl drawThirdEnemies
+
 	//////////////////////////
 	// PLAYER CONFIGURATION //
 	//////////////////////////
@@ -227,6 +79,18 @@ inf_loop:
 	b inf_loop
 
 .data
+
+// 1 here represents display status
+enemy1_controls:
+    .byte 22, 1, 64, 0
+    .byte 57, 1, 64, 0
+    .byte 91, 0, 64, 0
+    .byte 126, 1, 64, 0
+    .byte 160, 1, 64, 0
+    .byte 194, 1, 64, 0
+    .byte 229, 1, 64, 0
+    .byte 263, 1, 64, 0
+    .byte 298, 1, 64, 0
 
 enemy1:
 	.hword 24, 16, 0x0
@@ -270,6 +134,19 @@ enemy1:
 	.hword 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x1e, 0x1e, 0x1e, 0x1e
 	.hword 0x0, 0x0, 0x0, 0x0
 
+// 1 here represents display status
+enemy2_controls:
+    .byte 21, 1, 40, 0
+    .byte 52, 1, 40, 0
+    .byte 83, 0, 40, 0
+    .byte 114, 1, 40, 0
+    .byte 145, 1, 40, 0
+    .byte 175, 1, 40, 0
+    .byte 206, 1, 40, 0
+    .byte 237, 1, 40, 0
+    .byte 268, 1, 40, 0
+    .byte 299, 1, 40, 0
+
 enemy2:
 	.hword 22, 16, 0x0
 	.hword 0x0, 0x0, 0x0, 0x0, 0x7e0, 0x7e0, 0x0, 0x0, 0x0, 0x0
@@ -308,6 +185,22 @@ enemy2:
 	.hword 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x7e0, 0x7e0, 0x7e0, 0x7e0
 	.hword 0x0, 0x0, 0x7e0, 0x7e0, 0x7e0, 0x7e0, 0x0, 0x0, 0x0, 0x0
 	.hword 0x0, 0x0
+
+// 1 here represents display status
+enemy3_controls:
+    .byte 16, 1, 16, 0
+    .byte 40, 1, 16, 0
+    .byte 64, 0, 16, 0
+    .byte 88, 1, 16, 0
+    .byte 112, 1, 16, 0
+    .byte 136, 1, 16, 0
+    .byte 160, 1, 16, 0
+    .byte 184, 1, 16, 0
+    .byte 208, 1, 16, 0
+    .byte 232, 1, 16, 0
+    .byte 256, 1, 16, 0
+    .byte 280, 1, 16, 0
+    .byte 304, 1, 16, 0
 
 enemy3:
 	.hword 16, 16, 0x0
@@ -1111,7 +1004,178 @@ CheckEnemyCollision:
 	no_collision:
 		// Epilogue.
 		pop {r4, r5, r6, r7, r8, r9, r10, r11, pc}
-	
+
+drawFirstEnemies:
+	// r0 - pixmap ptr.
+	// r1 - pixmap control ptr.
+	// Prologue.
+	push {r4, r5, r6, r7, r8, r9, r10, r11, lr}
+
+    mov r4, #0
+    b drawFirstEnemiesBodyConditionTest
+
+    drawFirstEnemiesBody:
+        mov r5, #4
+        mul r6, r4, r5
+        
+        // Get address of next enemy in struct.
+        add r7, r1, r6
+
+        // Retrieve control values.
+		ldrb r8, [r7, #PIXMAP_XPOS]
+		ldrb r9, [r7, #PIXMAP_YPOS]
+
+        // X-Vel is sprite display status here.
+        // 1 = draw, 0 = skip.
+		ldrb r10, [r7, #PIXMAP_XVEL]
+        cmp r10, #0
+        beq skipDrawFirstEnemies
+
+        // Adjust x's of sprites past 256.
+        cmp r8, #0x7
+        beq correctDrawFirstEnemiesByte
+        cmp r8, #0x2a
+		beq correctDrawFirstEnemiesByte
+        b correctDrawFirstEnemies
+
+        correctDrawFirstEnemiesByte:
+            ldr r10, =#0x100
+			add r8, r10, r8
+
+        correctDrawFirstEnemies:
+            mov r1, r8
+            mov r2, r9
+            bl BitBlit
+
+        // Reset caller saved registers.
+        ldr r0, =enemy1
+        ldr r1, =enemy1_controls
+		
+    skipDrawFirstEnemies:
+        add r4, r4, #1
+		
+    drawFirstEnemiesBodyConditionTest:
+        cmp r4, #9
+        blt drawFirstEnemiesBody
+
+
+	// Epilogue.
+	pop {r4, r5, r6, r7, r8, r9, r10, r11, pc}
+
+drawSecondEnemies:
+	// r0 - pixmap ptr.
+	// r1 - pixmap control ptr.
+	// Prologue.
+	push {r4, r5, r6, r7, r8, r9, r10, r11, lr}
+
+    mov r4, #0
+    b drawSecondEnemiesConditionTest
+
+    drawSecondEnemiesBody:
+        mov r5, #4
+        mul r6, r4, r5
+        
+        // Get address of next enemy in struct.
+        add r7, r1, r6
+
+        // Retrieve control values.
+		ldrb r8, [r7, #PIXMAP_XPOS]
+		ldrb r9, [r7, #PIXMAP_YPOS]
+
+        // X-Vel is sprite display status here.
+        // 1 = draw, 0 = skip.
+		ldrb r10, [r7, #PIXMAP_XVEL]
+        cmp r10, #0
+        beq skipDrawSecondEnemies
+
+        // Adjust x's of sprites past 256.
+        cmp r8, #0xc
+        beq correctDrawSecondEnemiesByte
+        cmp r8, #0x2b
+		beq correctDrawSecondEnemiesByte
+        b correctDrawSecondEnemies
+
+        correctDrawSecondEnemiesByte:
+            ldr r10, =#0x100
+			add r8, r10, r8
+
+        correctDrawSecondEnemies:
+            mov r1, r8
+            mov r2, r9
+            bl BitBlit
+
+        // Reset caller saved registers.
+        ldr r0, =enemy2
+        ldr r1, =enemy2_controls
+
+    skipDrawSecondEnemies:
+        add r4, r4, #1
+		
+    drawSecondEnemiesConditionTest:
+        cmp r4, #10
+        blt drawSecondEnemiesBody
+
+	// Epilogue.
+	pop {r4, r5, r6, r7, r8, r9, r10, r11, pc}
+
+drawThirdEnemies:
+	// r0 - pixmap ptr.
+	// r1 - pixmap control ptr.
+	// Prologue.
+	push {r4, r5, r6, r7, r8, r9, r10, r11, lr}
+
+    mov r4, #0
+    b drawThirdEnemiesConditionTest
+
+    drawThirdEnemiesBody:
+        mov r5, #4
+        mul r6, r4, r5
+        
+        // Get address of next enemy in struct.
+        add r7, r1, r6
+
+        // Retrieve control values.
+		ldrb r8, [r7, #PIXMAP_XPOS]
+		ldrb r9, [r7, #PIXMAP_YPOS]
+
+        // X-Vel is sprite display status here.
+        // 1 = draw, 0 = skip.
+		ldrb r10, [r7, #PIXMAP_XVEL]
+        cmp r10, #0
+        beq skipDrawThirdEnemies
+
+        // Adjust x's of sprites past 256.
+        cmp r8, #0x0
+        beq correctDrawThirdEnemiesByte
+        cmp r8, #0x18
+		beq correctDrawThirdEnemiesByte
+        cmp r8, #0x30
+		beq correctDrawThirdEnemiesByte
+        b correctDrawThirdEnemies
+
+        correctDrawThirdEnemiesByte:
+            ldr r10, =#0x100
+			add r8, r10, r8
+
+        correctDrawThirdEnemies:
+            mov r1, r8
+            mov r2, r9
+            bl BitBlit
+
+        // Reset caller saved registers.
+        ldr r0, =enemy3
+        ldr r1, =enemy3_controls
+		
+    skipDrawThirdEnemies:
+        add r4, r4, #1
+		
+    drawThirdEnemiesConditionTest:
+        cmp r4, #13
+        blt drawThirdEnemiesBody
+
+	// Epilogue.
+	pop {r4, r5, r6, r7, r8, r9, r10, r11, pc}
+
 UpdatePos:
 	// Update positions of bitmaps.
 	// r0 - pixmap control ptr.
