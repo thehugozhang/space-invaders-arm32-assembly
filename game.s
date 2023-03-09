@@ -1392,6 +1392,7 @@ PlayerCollisions:
         mov r6, #224
         strb r5, [r4, #PIXMAP_XPOS]
         strb r6, [r4, #PIXMAP_YPOS]
+        bl ResetEnemies
         b goToEpilogue
 
         goToNextLaser:
@@ -1403,6 +1404,76 @@ PlayerCollisions:
     goToEpilogue:
         // Epilogue.
         pop {r4, r5, r6, r7, r8, r9, r10, r11, pc}
+
+ResetEnemies:
+    push {r4, r5, r6, r7, r8, r9, lr}
+
+    mov r4, #0
+    ldr r5, =enemy1_controls
+
+    b enemy1_reset_test
+    enemy1_reset_body:
+        mov r6, #4
+        mul r7, r4, r6
+        
+        // Get address of next enemy in struct.
+        add r8, r5, r7
+
+        mov r9, #1
+        strb r9, [r8, #PIXMAP_XVEL]
+
+        no_enemy1_reset:
+            add r4, r4, #1
+
+    enemy1_reset_test:
+        cmp r4, #9
+        blt enemy1_reset_body
+    
+    // Reset r4 to 0 again to cycle through other destroyed sprites.
+    mov r4, #0
+    ldr r5, =enemy2_controls
+
+    b enemy2_reset_test
+    enemy2_reset_body:
+        mov r6, #4
+        mul r7, r4, r6
+        
+        // Get address of next enemy in struct.
+        add r8, r5, r7
+
+        mov r9, #1
+        strb r9, [r8, #PIXMAP_XVEL]
+
+        no_enemy2_reset:
+            add r4, r4, #1
+
+    enemy2_reset_test:
+        cmp r4, #10
+        blt enemy2_reset_body
+    
+    mov r4, #0
+    ldr r5, =enemy3_controls
+
+    b enemy3_reset_test
+    enemy3_reset_body:
+        mov r6, #4
+        mul r7, r4, r6
+        
+        // Get address of next enemy in struct.
+        add r8, r5, r7
+
+        mov r9, #1
+        strb r9, [r8, #PIXMAP_XVEL]
+
+        no_enemy3_reset:
+            add r4, r4, #1
+
+    enemy3_reset_test:
+        cmp r4, #13
+        blt enemy3_reset_body
+
+    // Epilogue.
+    pop {r4, r5, r6, r7, r8, r9, pc}
 
 BitBlit:
 	// Draws a pixelmap from a pointer at coords (x,y). 
