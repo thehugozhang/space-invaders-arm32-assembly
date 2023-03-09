@@ -54,22 +54,21 @@ inf_loop:
     ldr r1, =enemy3_controls
     bl drawThirdEnemies
 
-	//////////////////////////
-	// PLAYER CONFIGURATION //
-	//////////////////////////
+	///////////////////////////
+	// GENERAL CONFIGURATION //
+	///////////////////////////
 	
 	ldr r0, =spaceship_control
 	ldr r1, =spaceship
 	bl UpdatePos
-
-	// ldr r0, =laser_controls
-	// ldr r1, =laser
-	// ldr r2, =laser_statuses
-    // bl UpdateLasers
 	
 	ldr r0, =enemy_laser_controls
 	ldr r1, =enemy_laser
 	bl UpdateEnemyLasers
+
+    ldr r0, =enemy_laser_controls
+    ldr r1, =spaceship_control
+	bl PlayerCollisions
 
 	b inf_loop
 
@@ -1305,7 +1304,7 @@ UpdateEnemyLasers:
 	    ldrb r9, [r7, #PIXMAP_YVEL]
         
         // If reach bottom of screen, reset.
-        cmp r8, #212
+        cmp r8, #222
         bgt resetToTop
 
         // Else increase y-pos.
@@ -1323,7 +1322,7 @@ UpdateEnemyLasers:
 	    ldr r0, =enemy_laser
         ldrb r1, [r7, #PIXMAP_XPOS] // TODO adjust for end x positions.
         
-        // Loading bytes meaning its get cut off at xpos 265 because its 0x109 and loads 0x09 only.
+        // Ldrb means bytes get cut off after xpos 256. Ex. 0x109 and ldrb loads 0x09 only.
         cmp r1, #0x0
         beq correctEnemyLaserByte
         cmp r1, #0x18
@@ -1351,6 +1350,59 @@ UpdateEnemyLasers:
 
     // Epilogue.
 	pop {r4, r5, r6, r7, r8, r9, r10, r11, pc}
+
+PlayerCollisions:
+    // r0 - lasers control ptr.
+    // r1 - spaceship control ptr.
+    // Prologue.
+	push {r4, r5, r6, r7, r8, r9, r10, r11, lr}
+
+    // Spaceship position.
+    ldrb r4, [r1, #PIXMAP_XPOS]
+    
+    mov r6, #0
+    b player_collisions_test
+    player_collisions_body:
+        // Calculate shift in control struct.
+        mov r7, #4
+        mul r8, r7, r6
+        add r9, r0, r8
+
+        // Get Y-POS/Y-VEL values.
+        ldrb r10, [r9, #PIXMAP_XPOS]
+	    ldrb r11, [r9, #PIXMAP_YPOS]
+
+        cmp r11, #0xda
+        blt goToNextLaser
+
+        // Calculate spaceship bounding box.
+        mov r7, r4
+        sub r5, r7, #0xf
+        add r7, r4, #0xf
+
+        cmp r10, r5
+        blt goToNextLaser
+        cmp r10, r7
+        bgt goToNextLaser
+
+        // Otherwise, if laser in spaceship, trigger collision.
+        // Set spaceship back to starting point.
+        ldr r4, =spaceship_control
+        mov r5, #160
+        mov r6, #224
+        strb r5, [r4, #PIXMAP_XPOS]
+        strb r6, [r4, #PIXMAP_YPOS]
+        b goToEpilogue
+
+        goToNextLaser:
+            add r6, r6, #1
+    player_collisions_test:
+        cmp r6, #13
+        blt player_collisions_body
+    
+    goToEpilogue:
+        // Epilogue.
+        pop {r4, r5, r6, r7, r8, r9, r10, r11, pc}
 
 BitBlit:
 	// Draws a pixelmap from a pointer at coords (x,y). 
