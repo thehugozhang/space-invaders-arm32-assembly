@@ -26,7 +26,6 @@ _start:
 	mov sp, #0x800000
 	
 inf_loop:
-	// Place Your Test Code Here
 	bl ClearTextBuffer
 	
 	ldrh r0, =0x0000
@@ -213,40 +212,15 @@ inf_loop:
 	ldr r0, =spaceship_control
 	ldr r1, =spaceship
 	bl UpdatePos
-	
-	//ldr r0, =laser
-	//mov r1, #160
-	//mov r2, #200
-	//bl BitBlit
-	
+
 	ldr r0, =laser_controls
 	ldr r1, =laser
 	ldr r2, =laser_statuses
-	bl UpdateLaser1
-	
-	// ldr r0, =laser_controls
-	// ldr r1, =laser
-	// ldr r2, =laser_statuses
-	// bl UpdateLaser2
-	
-	// ldr r0, =laser_controls
-	// ldr r1, =laser
-	// ldr r2, =laser_statuses
-	// bl UpdateLaser3
-	
-	// ldr r0, =laser_controls
-	// ldr r1, =laser
-	// ldr r2, =laser_statuses
-	// bl UpdateLaser4
-	
-	// ldr r0, =laser_controls
-	// ldr r1, =laser
-	// ldr r2, =laser_statuses
-	// bl UpdateLaser5
+    bl UpdateLasers
 	
 	ldr r0, =enemy_laser_controls
 	ldr r1, =enemy_laser
-	bl updateEnemyLasers
+	bl UpdateEnemyLasers
 
 	bl CheckEnemyCollision
 
@@ -554,26 +528,26 @@ laser_beam:
 	.hword 0x7bf, 0x7bf
 
 laser_controls:
-	.byte 0, 0, 28, 8
-	.byte 0, 0, 28, 8
-	.byte 0, 0, 28, 8
-	.byte 0, 0, 28, 8
-	.byte 0, 0, 28, 8
-	.byte 0, 0, 28, 8
-	.byte 0, 0, 28, 8
-	.byte 0, 0, 28, 8
-	.byte 0, 0, 28, 8
-	.byte 0, 0, 28, 8
-	.byte 0, 0, 28, 8
-	.byte 0, 0, 28, 8
-	.byte 0, 0, 28, 8
-	.byte 0, 0, 28, 8
-	.byte 0, 0, 28, 8
-	.byte 0, 0, 28, 8
-	.byte 0, 0, 28, 8
-	.byte 0, 0, 28, 8
-	.byte 0, 0, 28, 8
-	.byte 0, 0, 28, 8
+	.byte 0, 0, 28, 10
+	.byte 0, 0, 28, 10
+	.byte 0, 0, 28, 10
+	.byte 0, 0, 28, 10
+	.byte 0, 0, 28, 10
+	.byte 0, 0, 28, 10
+	.byte 0, 0, 28, 10
+	.byte 0, 0, 28, 10
+	.byte 0, 0, 28, 10
+	.byte 0, 0, 28, 10
+	.byte 0, 0, 28, 10
+	.byte 0, 0, 28, 10
+	.byte 0, 0, 28, 10
+	.byte 0, 0, 28, 10
+	.byte 0, 0, 28, 10
+	.byte 0, 0, 28, 10
+	.byte 0, 0, 28, 10
+	.byte 0, 0, 28, 10
+	.byte 0, 0, 28, 10
+	.byte 0, 0, 28, 10
 	.byte 0, 0, 5, 5
 
 laser_statuses:
@@ -585,19 +559,19 @@ laser:
 	.hword 0x7bf, 0x7bf, 0x7bf, 0x7bf, 0x7bf, 0x7bf
 
 enemy_laser_controls:
-	.byte 16, 0, 16, 8
-	.byte 40, 0, 16, 8
-	.byte 64, 0, 16, 24
-	.byte 88, 0, 16, 24
-	.byte 112, 0, 16, 24
-	.byte 136, 0, 16, 8
-	.byte 160, 0, 16, 8
-	.byte 184, 0, 16, 8
-	.byte 208, 0, 16, 24
-	.byte 232, 0, 16, 24
-	.byte 256, 0, 16, 24
-	.byte 280, 0, 16, 8
-	.byte 304, 0, 16, 8
+	.byte 16, 0, 0, 10
+	.byte 40, 0, 0, 10
+	.byte 64, 0, 64, 10
+	.byte 88, 0, 64, 10
+	.byte 112, 0, 64, 10
+	.byte 136, 0, 0, 10
+	.byte 160, 0, 0, 10
+	.byte 184, 0, 0, 10
+	.byte 208, 0, 64, 10
+	.byte 232, 0, 64, 10
+	.byte 256, 0, 64, 10
+	.byte 280, 0, 0, 10
+	.byte 304, 0, 0, 10
 	
 enemy_laser:
 	.hword 2, 8, 0xffff
@@ -1215,7 +1189,7 @@ UpdatePos:
 	// Epilogue.
 	pop {r4, r5, r6, r7, r8, r9, pc}
 
-UpdateLaser1:
+UpdateLasers:
 	// Update positions of laser bitmaps.
 	// r0 - pixmap control ptr.
 	// r1 - pixmap ptr.
@@ -1236,7 +1210,7 @@ UpdateLaser1:
 		// Compare laser status value
 		ldrb r7, [r2, #0] // laser status value
 		cmp r7, #0
-		beq skipUpdateLaser1
+		beq skipUpdateLasers
 
 		// Retrieve control values.
 		ldrb r8, [r4, #PIXMAP_XPOS]
@@ -1277,12 +1251,11 @@ UpdateLaser1:
 		ldr r1, =laser
 		ldr r2, =laser_statuses
 	
-	skipUpdateLaser1:
+	skipUpdateLasers:
 		add r10, r10, #1
 	updateShotLaserCondition:
 		cmp r10, #20
 		blt updateShotLaserBody
-	
 	
 	// Epilogue.
 	pop {r4, r5, r6, r7, r8, r9, r10, r11, pc}
@@ -1297,6 +1270,7 @@ FireLaserBeam:
 	// Get spaceship x-pos.
 	ldrb r1, [r1, #PIXMAP_XPOS]
 	
+    // Adjust X-Pos for end screen.
 	cmp r1, #0x9
 	beq correctLaserBeamByte
 	cmp r1, #0x18
@@ -1316,8 +1290,8 @@ FireLaserBeam:
 
 	correctLaserBeamDraw:
 	
-	// TODO Need to adjust positions 265-310 here.
-	mov r2, #108 //ypos
+    // Y-Pos
+	mov r2, #108
 
 	// Draw bitmap.
 	bl BitBlit
@@ -1410,7 +1384,7 @@ UpdateNextLaser:
 	// Epilogue.
 	pop {r4, r5, r6, r7, r8, r9, r10, r11, pc}
 
-updateEnemyLasers:
+UpdateEnemyLasers:
     // r0 - enemy laser control ptr.
     // r1 - enemy laser pixmap ptr.
     // Prologue.
