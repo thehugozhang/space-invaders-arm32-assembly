@@ -1216,7 +1216,10 @@ UpdateLasers:
 		ldrb r8, [r4, #PIXMAP_XPOS]
 		ldrb r5, [r4, #PIXMAP_YPOS]
 		ldrb r6, [r4, #PIXMAP_YVEL]
-
+		
+		cmp r5, #0x14
+		beq skipUpdateLasers
+		
 		// adjust x for end screen
 
 		cmp r8, #0x9
