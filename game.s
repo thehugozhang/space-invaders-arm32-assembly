@@ -1143,14 +1143,24 @@ LaserBeamCollision:
         // Retrieve current iteration enemy center coords.
 		ldrb r9, [r8, #PIXMAP_XPOS]
         
-        // TODO adjust for x.
-        
-        // Calculate enemy 1 bounding box.
-        sub r6, r9, #12
-        add r7, r9, #12
-        // Powerup radiation added radius.
-        sub r6, r6, r1
-        add r7, r7, r1
+        // Adjust x's of sprites past 256.
+        cmp r9, #0x7
+        beq correctEnemy1Collision
+        cmp r9, #0x2a
+		beq correctEnemy1Collision
+        b skipCorrectEnemy1Collision
+
+        correctEnemy1Collision:
+            ldr r10, =#0x100
+			add r9, r10, r9
+
+        skipCorrectEnemy1Collision:
+            // Calculate enemy 1 bounding box.
+            sub r6, r9, #12
+            add r7, r9, #12
+            // Powerup radiation added radius.
+            sub r6, r6, r1
+            add r7, r7, r1
 
         cmp r0, r6
         blt no_enemy1_collision
@@ -1184,15 +1194,24 @@ LaserBeamCollision:
         // Retrieve current iteration enemy center coords.
 		ldrb r9, [r8, #PIXMAP_XPOS]
         
-        // TODO adjust for x.
-        
-        // Calculate enemy 1 bounding box.
-        sub r6, r9, #12
-        add r7, r9, #12
-        
-        // Powerup radiation added radius.
-        sub r6, r6, r1
-        add r7, r7, r1
+        // Adjust x's of sprites past 256.
+        cmp r9, #0xc
+        beq correctEnemy2Collision
+        cmp r9, #0x2b
+		beq correctEnemy2Collision
+        b skipCorrectEnemy2Collision
+
+        correctEnemy2Collision:
+            ldr r10, =#0x100
+			add r9, r10, r9
+
+        skipCorrectEnemy2Collision:
+            // Calculate enemy 1 bounding box.
+            sub r6, r9, #12
+            add r7, r9, #12
+            // Powerup radiation added radius.
+            sub r6, r6, r1
+            add r7, r7, r1
 
         cmp r0, r6
         blt no_enemy2_collision
@@ -1225,15 +1244,26 @@ LaserBeamCollision:
         // Retrieve current iteration enemy center coords.
 		ldrb r9, [r8, #PIXMAP_XPOS]
         
-        // TODO adjust for x.
-        
-        // Calculate enemy 1 bounding box.
-        sub r6, r9, #12
-        add r7, r9, #12
+        // Adjust x's of sprites past 256.
+        cmp r9, #0x0
+        beq correctEnemy3Collision
+        cmp r9, #0x18
+		beq correctEnemy3Collision
+        cmp r9, #0x30
+		beq correctEnemy3Collision
+        b skipCorrectEnemy3Collision
 
-        // Powerup radiation added radius.
-        sub r6, r6, r1
-        add r7, r7, r1
+        correctEnemy3Collision:
+            ldr r10, =#0x100
+			add r9, r10, r9
+
+        skipCorrectEnemy3Collision:
+            // Calculate enemy 1 bounding box.
+            sub r6, r9, #12
+            add r7, r9, #12
+            // Powerup radiation added radius.
+            sub r6, r6, r1
+            add r7, r7, r1
 
         cmp r0, r6
         blt no_enemy3_collision
