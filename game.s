@@ -1297,6 +1297,25 @@ FireLaserBeam:
 	// Get spaceship x-pos.
 	ldrb r1, [r1, #PIXMAP_XPOS]
 	
+	cmp r1, #0x9
+	beq correctLaserBeamByte
+	cmp r1, #0x18
+	beq correctLaserBeamByte
+	cmp r1, #0x27
+	beq correctLaserBeamByte
+	cmp r1, #0x36
+	beq correctLaserBeamByte
+	cmp r1, #0x45
+	beq correctLaserBeamByte
+
+	b correctLaserBeamDraw
+
+	correctLaserBeamByte:
+		ldr r9, =#0x100
+		add r1, r9, r1
+
+	correctLaserBeamDraw:
+	
 	// TODO Need to adjust positions 265-310 here.
 	mov r2, #108 //ypos
 
