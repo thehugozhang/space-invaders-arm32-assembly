@@ -45,47 +45,47 @@ inf_loop:
 	
 	ldr r0, =enemy1
 	mov r1, #22
-	mov r2, #112
+	mov r2, #64
 	bl BitBlit
 	
 	ldr r0, =enemy1
 	mov r1, #57
-	mov r2, #112
+	mov r2, #64
 	bl BitBlit
 	
 	ldr r0, =enemy1
 	mov r1, #91
-	mov r2, #112
+	mov r2, #64
 	bl BitBlit
 	
 	ldr r0, =enemy1
 	mov r1, #126
-	mov r2, #112
+	mov r2, #64
 	bl BitBlit
 	
 	ldr r0, =enemy1
 	mov r1, #160
-	mov r2, #112
+	mov r2, #64
 	bl BitBlit
 	
 	ldr r0, =enemy1
 	mov r1, #194
-	mov r2, #112
+	mov r2, #64
 	bl BitBlit
 	
 	ldr r0, =enemy1
 	mov r1, #229
-	mov r2, #112
+	mov r2, #64
 	bl BitBlit
 	
 	ldr r0, =enemy1
 	ldr r1,=#263
-	mov r2, #112
+	mov r2, #64
 	bl BitBlit
 	
 	ldr r0, =enemy1
 	ldr r1,=#298
-	mov r2, #112
+	mov r2, #64
 	bl BitBlit
 	
 	//////////////////////////
@@ -94,172 +94,57 @@ inf_loop:
 	
 	ldr r0, =enemy2
 	mov r1, #21
-	mov r2, #88
+	mov r2, #40
 	bl BitBlit
 		
 	ldr r0, =enemy2
 	mov r1, #52
-	mov r2, #88
+	mov r2, #40
 	bl BitBlit	
 	
 	ldr r0, =enemy2
 	mov r1, #83
-	mov r2, #88
+	mov r2, #40
 	bl BitBlit
 	
 	ldr r0, =enemy2
 	mov r1, #114
-	mov r2, #88
+	mov r2, #40
 	bl BitBlit
 		
 	ldr r0, =enemy2
 	mov r1, #145
-	mov r2, #88
+	mov r2, #40
 	bl BitBlit
 		
 	ldr r0, =enemy2
 	mov r1, #175
-	mov r2, #88
+	mov r2, #40
 	bl BitBlit
 		
 	ldr r0, =enemy2
 	mov r1, #206
-	mov r2, #88
+	mov r2, #40
 	bl BitBlit
 	
 	ldr r0, =enemy2
 	mov r1, #237
-	mov r2, #88
+	mov r2, #40
 	bl BitBlit
 		
 	ldr r0, =enemy2
 	mov r1, #268
-	mov r2, #88
+	mov r2, #40
 	bl BitBlit
 		
 	ldr r0, =enemy2
 	ldr r1,=#299
-	mov r2, #88
-	bl BitBlit
-	
-	ldr r0, =enemy2
-	mov r1, #21
-	mov r2, #64
-	bl BitBlit
-		
-	ldr r0, =enemy2
-	mov r1, #52
-	mov r2, #64
-	bl BitBlit	
-	
-	ldr r0, =enemy2
-	mov r1, #83
-	mov r2, #64
-	bl BitBlit
-	
-	ldr r0, =enemy2
-	mov r1, #114
-	mov r2, #64
-	bl BitBlit
-		
-	ldr r0, =enemy2
-	mov r1, #145
-	mov r2, #64
-	bl BitBlit
-		
-	ldr r0, =enemy2
-	mov r1, #175
-	mov r2, #64
-	bl BitBlit
-		
-	ldr r0, =enemy2
-	mov r1, #206
-	mov r2, #64
-	bl BitBlit
-	
-	ldr r0, =enemy2
-	mov r1, #237
-	mov r2, #64
-	bl BitBlit
-		
-	ldr r0, =enemy2
-	mov r1, #268
-	mov r2, #64
-	bl BitBlit
-		
-	ldr r0, =enemy2
-	ldr r1,=#299
-	mov r2, #64
+	mov r2, #40
 	bl BitBlit
 	
 	//////////////////////////
 	// ENEMY3 CONFIGURATION //
 	//////////////////////////
-	
-	ldr r0, =enemy3
-	mov r1, #16
-	mov r2, #40
-	bl BitBlit
-	
-	ldr r0, =enemy3
-	mov r1, #40
-	mov r2, #40
-	bl BitBlit
-	
-	ldr r0, =enemy3
-	mov r1, #64
-	mov r2, #40
-	bl BitBlit	
-	
-	ldr r0, =enemy3
-	mov r1, #88
-	mov r2, #40
-	bl BitBlit	
-	
-	ldr r0, =enemy3
-	mov r1, #112
-	mov r2, #40
-	bl BitBlit	
-	
-	ldr r0, =enemy3
-	mov r1, #136
-	mov r2, #40
-	bl BitBlit	
-	
-	ldr r0, =enemy3
-	mov r1, #160
-	mov r2, #40
-	bl BitBlit	
-	
-	ldr r0, =enemy3
-	mov r1, #184
-	mov r2, #40
-	bl BitBlit	
-	
-	ldr r0, =enemy3
-	mov r1, #208
-	mov r2, #40
-	bl BitBlit	
-	
-	ldr r0, =enemy3
-	mov r1, #232
-	mov r2, #40
-	bl BitBlit	
-	
-	ldr r0, =enemy3
-	mov r1, #256
-	mov r2, #40
-	bl BitBlit	
-	
-	ldr r0, =enemy3
-	mov r1, #280
-	mov r2, #40
-	bl BitBlit	
-	
-	ldr r0, =enemy3
-	mov r1, #304
-	mov r2, #40
-	bl BitBlit
 	
 	ldr r0, =enemy3
 	mov r1, #16
@@ -364,6 +249,10 @@ inf_loop:
 	ldr r2, =laser_statuses
 	bl UpdateLaser5
 	
+	ldr r0, =enemy_laser_controls
+	ldr r1, =enemy_laser
+	bl updateEnemyLasers
+
 	bl CheckEnemyCollision
 
 	b inf_loop
@@ -688,15 +577,15 @@ laser:
 enemy_laser_controls:
 	.byte 16, 0, 16, 8
 	.byte 40, 0, 16, 8
-	.byte 64, 0, 40, 8
-	.byte 88, 0, 40, 8
-	.byte 112, 0, 40, 8
+	.byte 64, 0, 16, 24
+	.byte 88, 0, 16, 24
+	.byte 112, 0, 16, 24
 	.byte 136, 0, 16, 8
 	.byte 160, 0, 16, 8
 	.byte 184, 0, 16, 8
-	.byte 208, 0, 40, 8
-	.byte 232, 0, 40, 8
-	.byte 256, 0, 40, 8
+	.byte 208, 0, 16, 24
+	.byte 232, 0, 16, 24
+	.byte 256, 0, 16, 24
 	.byte 280, 0, 16, 8
 	.byte 304, 0, 16, 8
 	
@@ -1576,6 +1465,72 @@ UpdateNextLaser:
 	// Epilogue.
 	pop {r4, r5, r6, r7, r8, r9, r10, r11, pc}
 
+updateEnemyLasers:
+    // r0 - enemy laser control ptr.
+    // r1 - enemy laser pixmap ptr.
+    // Prologue.
+	push {r4, r5, r6, r7, r8, r9, r10, r11, lr}
+
+    mov r4, #0
+
+    b enemy_laser_condition
+    enemy_laser_body:
+        // Calculate shift in control struct.
+        mov r5, #4
+        mul r6, r5, r4
+        add r7, r0, r6
+
+        // Get Y-POS/Y-VEL values.
+        ldrb r8, [r7, #PIXMAP_YPOS]
+	    ldrb r9, [r7, #PIXMAP_YVEL]
+        
+        // If reach bottom of screen, reset.
+        cmp r8, #212
+        bgt resetToTop
+
+        // Else increase y-pos.
+        add r10, r8, r9
+        b continueAfterReset
+
+        resetToTop:
+            mov r10, #16
+
+        continueAfterReset:
+            // Store updated Y-POS.
+            strb r10, [r7, #PIXMAP_YPOS]
+
+        // Draw laser.
+	    ldr r0, =enemy_laser
+        ldrb r1, [r7, #PIXMAP_XPOS] // TODO adjust for end x positions.
+        
+        // Loading bytes meaning its get cut off at xpos 265 because its 0x109 and loads 0x09 only.
+        cmp r1, #0x0
+        beq correctEnemyLaserByte
+        cmp r1, #0x18
+        beq correctEnemyLaserByte
+        cmp r1, #0x30
+        beq correctEnemyLaserByte
+
+        b continueEnemyLaserDraw
+
+        correctEnemyLaserByte:
+            ldr r2, =#0x100
+            add r1, r2, r1
+
+        continueEnemyLaserDraw:
+            mov r2, r10
+            bl BitBlit
+		
+		ldr r0, =enemy_laser_controls
+		ldr r1, =enemy_laser
+        // Update loop iteration.
+        add r4, r4, #1
+    enemy_laser_condition:
+        cmp r4, #13
+        blt enemy_laser_body
+
+    // Epilogue.
+	pop {r4, r5, r6, r7, r8, r9, r10, r11, pc}
 
 BitBlit:
 	// Draws a pixelmap from a pointer at coords (x,y). 
