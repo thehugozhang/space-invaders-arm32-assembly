@@ -16,12 +16,7 @@
 .EQU PIXMAP_TRANSPARENCY, 4
 .EQU PIXMAP_PIXELDATA, 6
 
-.EQU LASER_ONE, 0
-.EQU LASER_TWO, 4
-.EQU LASER_THREE, 8
-.EQU LASER_FOUR, 12
-.EQU LASER_FIVE, 16
-.EQU LASER_COUNT, 20
+.EQU LASER_COUNT, 80
 .EQU LASER_STATUS, 5
 
 .global _start
@@ -229,25 +224,25 @@ inf_loop:
 	ldr r2, =laser_statuses
 	bl UpdateLaser1
 	
-	ldr r0, =laser_controls
-	ldr r1, =laser
-	ldr r2, =laser_statuses
-	bl UpdateLaser2
+	// ldr r0, =laser_controls
+	// ldr r1, =laser
+	// ldr r2, =laser_statuses
+	// bl UpdateLaser2
 	
-	ldr r0, =laser_controls
-	ldr r1, =laser
-	ldr r2, =laser_statuses
-	bl UpdateLaser3
+	// ldr r0, =laser_controls
+	// ldr r1, =laser
+	// ldr r2, =laser_statuses
+	// bl UpdateLaser3
 	
-	ldr r0, =laser_controls
-	ldr r1, =laser
-	ldr r2, =laser_statuses
-	bl UpdateLaser4
+	// ldr r0, =laser_controls
+	// ldr r1, =laser
+	// ldr r2, =laser_statuses
+	// bl UpdateLaser4
 	
-	ldr r0, =laser_controls
-	ldr r1, =laser
-	ldr r2, =laser_statuses
-	bl UpdateLaser5
+	// ldr r0, =laser_controls
+	// ldr r1, =laser
+	// ldr r2, =laser_statuses
+	// bl UpdateLaser5
 	
 	ldr r0, =enemy_laser_controls
 	ldr r1, =enemy_laser
@@ -559,6 +554,21 @@ laser_beam:
 	.hword 0x7bf, 0x7bf
 
 laser_controls:
+	.byte 0, 0, 28, 8
+	.byte 0, 0, 28, 8
+	.byte 0, 0, 28, 8
+	.byte 0, 0, 28, 8
+	.byte 0, 0, 28, 8
+	.byte 0, 0, 28, 8
+	.byte 0, 0, 28, 8
+	.byte 0, 0, 28, 8
+	.byte 0, 0, 28, 8
+	.byte 0, 0, 28, 8
+	.byte 0, 0, 28, 8
+	.byte 0, 0, 28, 8
+	.byte 0, 0, 28, 8
+	.byte 0, 0, 28, 8
+	.byte 0, 0, 28, 8
 	.byte 0, 0, 28, 8
 	.byte 0, 0, 28, 8
 	.byte 0, 0, 28, 8
@@ -1211,169 +1221,71 @@ UpdateLaser1:
 	// r1 - pixmap ptr.
 	// r2 - laser statuses.
 	// Prologue.
-	push {r4, r5, r6, r7, r8, r9, r10, lr}
+	push {r4, r5, r6, r7, r8, r9, r10, r11, lr}
 	
-	add r4, r0, #LASER_ONE
+	mov r10, #0
+	b updateShotLaserCondition
+	
+	updateShotLaserBody:
+		mov r4, #4
+		mul r11, r10, r4
+		
+		
+		add r4, r0, r11
 
-	// Compare laser status value
-	ldrb r7, [r2, #0] // laser status value
-	cmp r7, #0
-	beq skipUpdateLaser1
-	
-	// Retrieve control values.
-	ldrb r8, [r4, #PIXMAP_XPOS]
-	ldrb r5, [r4, #PIXMAP_YPOS]
-	ldrb r6, [r4, #PIXMAP_YVEL]
-	
-	sub r5, r5, r6
-	
-	strb r5, [r4, #PIXMAP_YPOS]
-	
-	mov r0, r1
-	mov r1, r8
-	mov r2, r5
-	// Draw bitmap.
-	bl BitBlit
+		// Compare laser status value
+		ldrb r7, [r2, #0] // laser status value
+		cmp r7, #0
+		beq skipUpdateLaser1
+
+		// Retrieve control values.
+		ldrb r8, [r4, #PIXMAP_XPOS]
+		ldrb r5, [r4, #PIXMAP_YPOS]
+		ldrb r6, [r4, #PIXMAP_YVEL]
+
+		// adjust x for end screen
+
+		cmp r8, #0x9
+		beq correctShotLaserByte
+		cmp r8, #0x18
+		beq correctShotLaserByte
+		cmp r8, #0x27
+		beq correctShotLaserByte
+		cmp r8, #0x36
+		beq correctShotLaserByte
+		cmp r8, #0x45
+		beq correctShotLaserByte
+
+		b correctShotLaserDraw
+
+		correctShotLaserByte:
+			ldr r9, =#0xf0
+			add r8, r9, r8
+
+		correctShotLaserDraw:
+			sub r5, r5, r6
+
+		strb r5, [r4, #PIXMAP_YPOS]
+
+		mov r0, r1
+		mov r1, r8
+		mov r2, r5
+		// Draw bitmap.
+		bl BitBlit
+		
+		ldr r0, =laser_controls
+		ldr r1, =laser
+		ldr r2, =laser_statuses
 	
 	skipUpdateLaser1:
-		// Epilogue.
-		pop {r4, r5, r6, r7, r8, r9, r10, pc}
-
-UpdateLaser2:
-	// Update positions of laser bitmaps.
-	// r0 - pixmap control ptr.
-	// r1 - pixmap ptr.
-	// r2 - laser statuses.
-	// Prologue.
-	push {r4, r5, r6, r7, r8, r9, r10, lr}
+		add r10, r10, #1
+	updateShotLaserCondition:
+		cmp r10, #20
+		blt updateShotLaserBody
 	
-	add r4, r0, #LASER_TWO
-
-	// Compare laser status value
-	ldrb r7, [r2, #0] // laser status value
-	cmp r7, #0
-	beq skipUpdateLaser2
 	
-	// Retrieve control values.
-	ldrb r8, [r4, #PIXMAP_XPOS]
-	ldrb r5, [r4, #PIXMAP_YPOS]
-	ldrb r6, [r4, #PIXMAP_YVEL]
-	
-	sub r5, r5, r6
-	
-	strb r5, [r4, #PIXMAP_YPOS]
-	
-	mov r0, r1
-	mov r1, r8
-	mov r2, r5
-	// Draw bitmap.
-	bl BitBlit
-	
-	skipUpdateLaser2:
-		// Epilogue.
-		pop {r4, r5, r6, r7, r8, r9, r10, pc}
-		
-UpdateLaser3:
-	// Update positions of laser bitmaps.
-	// r0 - pixmap control ptr.
-	// r1 - pixmap ptr.
-	// r2 - laser statuses.
-	// Prologue.
-	push {r4, r5, r6, r7, r8, r9, r10, lr}
-	
-	add r4, r0, #LASER_THREE
-
-	// Compare laser status value
-	ldrb r7, [r2, #0] // laser status value
-	cmp r7, #0
-	beq skipUpdateLaser3
-	
-	// Retrieve control values.
-	ldrb r8, [r4, #PIXMAP_XPOS]
-	ldrb r5, [r4, #PIXMAP_YPOS]
-	ldrb r6, [r4, #PIXMAP_YVEL]
-	
-	sub r5, r5, r6
-	
-	strb r5, [r4, #PIXMAP_YPOS]
-	
-	mov r0, r1
-	mov r1, r8
-	mov r2, r5
-	// Draw bitmap.
-	bl BitBlit
-	
-	skipUpdateLaser3:
-		// Epilogue.
-		pop {r4, r5, r6, r7, r8, r9, r10, pc}
-		
-UpdateLaser4:
-	// Update positions of laser bitmaps.
-	// r0 - pixmap control ptr.
-	// r1 - pixmap ptr.
-	// r2 - laser statuses.
-	// Prologue.
-	push {r4, r5, r6, r7, r8, r9, r10, lr}
-	
-	add r4, r0, #LASER_FOUR
-
-	// Compare laser status value
-	ldrb r7, [r2, #0] // laser status value
-	cmp r7, #0
-	beq skipUpdateLaser4
-	
-	// Retrieve control values.
-	ldrb r8, [r4, #PIXMAP_XPOS]
-	ldrb r5, [r4, #PIXMAP_YPOS]
-	ldrb r6, [r4, #PIXMAP_YVEL]
-	
-	sub r5, r5, r6
-	
-	strb r5, [r4, #PIXMAP_YPOS]
-	
-	mov r0, r1
-	mov r1, r8
-	mov r2, r5
-	// Draw bitmap.
-	bl BitBlit
-	
-	skipUpdateLaser4:
-		// Epilogue.
-		pop {r4, r5, r6, r7, r8, r9, r10, pc}
-		
-UpdateLaser5:
-	// Update positions of laser bitmaps.
-	// r0 - pixmap control ptr.
-	// r1 - pixmap ptr.
-	// r2 - laser statuses.
-	// Prologue.
-	push {r4, r5, r6, r7, r8, r9, r10, lr}
-	
-	add r4, r0, #LASER_FIVE
-
-	// Compare laser status value
-	ldrb r7, [r2, #0] // laser status value
-	cmp r7, #0
-	beq skipUpdateLaser5
-	
-	// Retrieve control values.
-	ldrb r8, [r4, #PIXMAP_XPOS]
-	ldrb r5, [r4, #PIXMAP_YPOS]
-	ldrb r6, [r4, #PIXMAP_YVEL]
-	
-	sub r5, r5, r6
-	
-	strb r5, [r4, #PIXMAP_YPOS]
-	
-	mov r0, r1
-	mov r1, r8
-	mov r2, r5
-	// Draw bitmap.
-	bl BitBlit
-	
-	skipUpdateLaser5:
-		// Epilogue.
-		pop {r4, r5, r6, r7, r8, r9, r10, pc}
+	// Epilogue.
+	pop {r4, r5, r6, r7, r8, r9, r10, r11, pc}
 
 FireLaserBeam:
 	// Update positions of bitmaps.
@@ -1410,10 +1322,25 @@ UpdateNextLaser:
 	ldrb r2, [r2, #PIXMAP_XPOS]
 	
 	// TODO Need to adjust positions 265-310 here.
-	
-	// Get next laser count.
-	ldrb r9, [r0, #LASER_COUNT] // this is using pixmap_xpos bc I didn't align count yet.
-	ldrb r7, [r0, #21]
+    cmp r2, #0x9
+    beq correctLaserByte
+    cmp r2, #0x18
+    beq correctLaserByte
+    cmp r2, #0x27
+    beq correctLaserByte
+    cmp r2, #0x36
+    beq correctLaserByte
+
+    b correctLaserDraw
+
+    correctLaserByte:
+        ldr r9, =#0x10f
+        add r2, r9, r2
+
+    correctLaserDraw:	
+        // Get next laser count.
+        ldrb r9, [r0, #LASER_COUNT] // this is using pixmap_xpos bc I didn't align count yet.
+        ldrb r7, [r0, #41]
 	
 	// Set next laser xpos to center of spaceship and y to just above spaceship.
 	// Also set yvel to -8.
@@ -1436,7 +1363,6 @@ UpdateNextLaser:
 	add r10, r9, #PIXMAP_YVEL
 	strb r8, [r0, r10]
 	
-	// TODO change this to more robust. rn Set status of laser 1 to active
 	strb r11, [r3, r7]
 		
 	// Update to next laser count.
@@ -1445,17 +1371,17 @@ UpdateNextLaser:
 	
 	// TODO: Check if greater than 16 (aka 20) than reset to 0.
 	// This resets the laser count iteration back to 0.
-	cmp r10, #20
+	cmp r10, #80
 	bne doNotResetZero
 	mov r10, #0
 	doNotResetZero:
 		strb r10, [r0, #LASER_COUNT]
-	cmp r7, #5
+	cmp r7, #20
 	bne doNotResetZeroAgain
 	// Update bitmap.
 	mov r7, #0
 	doNotResetZeroAgain:
-		strb r7, [r0, #21]
+		strb r7, [r0, #81]
 
 	mov r0, r4
 
