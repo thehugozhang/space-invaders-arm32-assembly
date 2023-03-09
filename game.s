@@ -1,3 +1,21 @@
+// Hugo Zhang (NetID: hyz0299)
+//
+// This game was inspired by the classic Space Invaders and is an arcade game where the goal is to destroy as many aliens as possible.
+//
+// The three advanced features implemented in this game include:
+//
+// 1. Massive number of active, discernable sprites (25+). This game uses a total of 7 uniques sprites for a total of 48 sprites.
+// 2. Multiple in-flight projectiles (bullets, laser blasts, etc. triggered by I/O e.g. button press). There are two types of laser blasts triggered by push buttons 0 and 1, as well as repeating volleys of enemy laser beams.
+// 3. Powerups. You can powerup by defeating at least 3 enemies to unlock the radiation laser, which can destroy aliens within a larger radius that is beyond its immediate reach.
+//
+// How to play the game:
+//
+// 1. Use Push Button 3 to go left, 2 to go right. Avoid enemy lasers.
+// 2. Use Push Button 1 to shoot a regular laser, 0 to shoot a radiation laser. Destroy all the aliens!
+// 3. When using push buttons, make sure to check one at a time! The game is not configured to handle combinations of push buttons.
+// 4. Defeat at least 3 aliens to unlock the radiation laser, which can eliminate nearby aliens without direct hits.
+// 5. That’s it! You win if you can successfully eliminate every alien.
+
 .text
 
 // These are addresses for the pixel buffer and text buffer
@@ -29,7 +47,26 @@ inf_loop:
 	bl ClearVGA
 	
 	bl CheckInput
-		
+
+	////////////////////////
+	// TEXT CONFIGURATION //
+	////////////////////////
+    
+    mov r0, #16
+	mov r1, #27
+	ldr r2, =MyStr1
+	bl DrawStr
+
+	mov r0, #18
+	mov r1, #29
+	ldr r2, =MyStr2
+	bl DrawStr
+	
+	mov r0, #3
+	mov r1, #31
+	ldr r2, =MyStr3
+	bl DrawStr
+
 	//////////////////////////
 	// ENEMY1 CONFIGURATION //
 	//////////////////////////
@@ -74,7 +111,8 @@ inf_loop:
 
 .data
 
-// 1 here represents display status
+// X Velocity for enemy controls represents display status.
+// 1 means alive (displayed on screen), 0 means destroyed (hidden).
 enemy1_controls:
     .byte 22, 1, 64, 0
     .byte 57, 1, 64, 0
@@ -128,7 +166,8 @@ enemy1:
 	.hword 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x1e, 0x1e, 0x1e, 0x1e
 	.hword 0x0, 0x0, 0x0, 0x0
 
-// 1 here represents display status
+// X Velocity for enemy controls represents display status.
+// 1 means alive (displayed on screen), 0 means destroyed (hidden).
 enemy2_controls:
     .byte 21, 1, 40, 0
     .byte 52, 1, 40, 0
@@ -180,7 +219,8 @@ enemy2:
 	.hword 0x0, 0x0, 0x7e0, 0x7e0, 0x7e0, 0x7e0, 0x0, 0x0, 0x0, 0x0
 	.hword 0x0, 0x0
 
-// 1 here represents display status
+// X Velocity for enemy controls represents display status.
+// 1 means alive (displayed on screen), 0 means destroyed (hidden).
 enemy3_controls:
     .byte 16, 1, 16, 0
     .byte 40, 1, 16, 0
@@ -227,6 +267,7 @@ enemy3:
 
 spaceship_control:
 	.byte 160, 0, 224, 0
+
 spaceship:
 	.hword 30, 16, 0x0
 	.hword 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0
@@ -278,8 +319,12 @@ spaceship:
 	.hword 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff
 	.hword 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff
 
+unlock_powerup:
+    .byte 0, 0, 0, 0
+
 laser_beam_powerup_controls:
     .byte 0, 0, 0, 0
+
 laser_beam_powerup:
 	.hword 9, 217, 0x39e7
 	.hword 0x39e7, 0x39e7, 0xb9f6, 0x9212, 0xbdf7, 0x9212, 0xb9f7, 0x3a07, 0x39e7, 0x0
@@ -481,6 +526,7 @@ laser_beam_powerup:
 
 laser_beam_controls:
 	.byte 0, 0, 0, 0
+
 laser_beam:
 	.hword 6, 217, 0xddd
 	.hword 0x7bf, 0x7bf, 0xffff, 0xffff, 0x7bf, 0x7bf, 0x7bf, 0x7bf, 0xffff, 0xffff
@@ -635,11 +681,18 @@ enemy_laser:
 	.hword 0xf000, 0xf000, 0xf000, 0xf000, 0xf000, 0xf000, 0xf000, 0xf000, 0xf000, 0xf000
 	.hword 0xf000, 0xf000, 0xf000, 0xf000, 0xf000, 0xf000
 
+MyStr1:
+    .string "Destroy the space invaders to save the universe!"
+
+MyStr2:
+    .string "Use Push Button 3 to go left, 2 to go right."
+
+MyStr3:
+    .string "Use Push Button 1 to shoot a regular laser, 0 to shoot a radiation laser."
+
 .align 4
 
 .text
-
-// Write your ClearTextBuffer, ClearVGA, and BitBlit routines below!
 
 ClearTextBuffer:
 	// Fills text buffer with spaces.
@@ -747,7 +800,7 @@ DrawPixelBuffer:
 CheckInput:
 	// Helper function that checks which push buttons pressed.
 	// Prologue.
-	push {r4, r5, r6, r7, r8, lr}
+	push {r4, r5, r6, r7, r8, r9, lr}
 	
 	// Convert coords to corresponding address.
 	ldr r4, =PUSH_BUTTONS
@@ -813,6 +866,7 @@ CheckInput:
 		
 		b exit_input
 	PushButton1:
+        // Shoot regular laser beam.
 		ldr r0, =laser_beam
 		ldr r1, =spaceship_control
         mov r2, #0
@@ -820,26 +874,35 @@ CheckInput:
 		
 		b exit_input
 	PushButton0:
+        // Need to defeat at least 3 aliens to use the radiation laser.
+        ldr r8, =unlock_powerup
+        ldrb r9, [r8]
+        cmp r9, #3
+        blt exit_input
+
+        // If at least 3 aliens defeated, shoot radiation laser.
 		ldr r0, =laser_beam_powerup
 		ldr r1, =spaceship_control
         mov r2, #16
 		bl FireLaserBeam
 
-		
 	exit_input:
 		// Epilogue.
-		pop {r4, r5, r6, r7, r8, pc}
+		pop {r4, r5, r6, r7, r8, r9, pc}
 
 drawFirstEnemies:
+    // Draw row of blue aliens using struct.
 	// r0 - pixmap ptr.
-	// r1 - pixmap control ptr.
+	// r1 - control ptr.
 	// Prologue.
-	push {r4, r5, r6, r7, r8, r9, r10, r11, lr}
+	push {r4, r5, r6, r7, r8, r9, r10, lr}
 
+    // Initialize for-loop to iterate over every alien.
     mov r4, #0
     b drawFirstEnemiesBodyConditionTest
 
     drawFirstEnemiesBody:
+        // Calculate current struct offset based on iteration.
         mov r5, #4
         mul r6, r4, r5
         
@@ -850,13 +913,13 @@ drawFirstEnemies:
 		ldrb r8, [r7, #PIXMAP_XPOS]
 		ldrb r9, [r7, #PIXMAP_YPOS]
 
-        // X-Vel is sprite display status here.
+        // X-Vel is sprite display status.
         // 1 = draw, 0 = skip.
 		ldrb r10, [r7, #PIXMAP_XVEL]
         cmp r10, #0
         beq skipDrawFirstEnemies
 
-        // Adjust x's of sprites past 256.
+        // Adjust x-pos of sprites past 256.
         cmp r8, #0x7
         beq correctDrawFirstEnemiesByte
         cmp r8, #0x2a
@@ -867,12 +930,13 @@ drawFirstEnemies:
             ldr r10, =#0x100
 			add r8, r10, r8
 
+        // Draw sprite at position in struct if displayed.
         correctDrawFirstEnemies:
             mov r1, r8
             mov r2, r9
             bl BitBlit
 
-        // Reset caller saved registers.
+        // Reset caller-saved registers.
         ldr r0, =enemy1
         ldr r1, =enemy1_controls
 		
@@ -883,20 +947,21 @@ drawFirstEnemies:
         cmp r4, #9
         blt drawFirstEnemiesBody
 
-
 	// Epilogue.
-	pop {r4, r5, r6, r7, r8, r9, r10, r11, pc}
+	pop {r4, r5, r6, r7, r8, r9, r10, pc}
 
 drawSecondEnemies:
+    // Draw row of green aliens using struct.
 	// r0 - pixmap ptr.
-	// r1 - pixmap control ptr.
-	// Prologue.
-	push {r4, r5, r6, r7, r8, r9, r10, r11, lr}
+	// r1 - control ptr.
+	push {r4, r5, r6, r7, r8, r9, r10, lr}
 
+    // Initialize for-loop to iterate over every alien.
     mov r4, #0
     b drawSecondEnemiesConditionTest
 
     drawSecondEnemiesBody:
+        // Calculate current struct offset based on iteration.
         mov r5, #4
         mul r6, r4, r5
         
@@ -907,13 +972,13 @@ drawSecondEnemies:
 		ldrb r8, [r7, #PIXMAP_XPOS]
 		ldrb r9, [r7, #PIXMAP_YPOS]
 
-        // X-Vel is sprite display status here.
+        // X-Vel is sprite display status.
         // 1 = draw, 0 = skip.
 		ldrb r10, [r7, #PIXMAP_XVEL]
         cmp r10, #0
         beq skipDrawSecondEnemies
 
-        // Adjust x's of sprites past 256.
+        // Adjust x-pos of sprites past 256.
         cmp r8, #0xc
         beq correctDrawSecondEnemiesByte
         cmp r8, #0x2b
@@ -924,12 +989,13 @@ drawSecondEnemies:
             ldr r10, =#0x100
 			add r8, r10, r8
 
+        // Draw sprite at position in struct if displayed.
         correctDrawSecondEnemies:
             mov r1, r8
             mov r2, r9
             bl BitBlit
 
-        // Reset caller saved registers.
+        // Reset caller-saved registers.
         ldr r0, =enemy2
         ldr r1, =enemy2_controls
 
@@ -941,18 +1007,20 @@ drawSecondEnemies:
         blt drawSecondEnemiesBody
 
 	// Epilogue.
-	pop {r4, r5, r6, r7, r8, r9, r10, r11, pc}
+	pop {r4, r5, r6, r7, r8, r9, r10, pc}
 
 drawThirdEnemies:
+    // Draw row of red aliens using struct.
 	// r0 - pixmap ptr.
-	// r1 - pixmap control ptr.
-	// Prologue.
-	push {r4, r5, r6, r7, r8, r9, r10, r11, lr}
+	// r1 - control ptr.
+	push {r4, r5, r6, r7, r8, r9, r10, lr}
 
+    // Initialize for-loop to iterate over every alien.
     mov r4, #0
     b drawThirdEnemiesConditionTest
 
     drawThirdEnemiesBody:
+        // Calculate current struct offset based on iteration.
         mov r5, #4
         mul r6, r4, r5
         
@@ -963,13 +1031,13 @@ drawThirdEnemies:
 		ldrb r8, [r7, #PIXMAP_XPOS]
 		ldrb r9, [r7, #PIXMAP_YPOS]
 
-        // X-Vel is sprite display status here.
+        // X-Vel is sprite display status.
         // 1 = draw, 0 = skip.
 		ldrb r10, [r7, #PIXMAP_XVEL]
         cmp r10, #0
         beq skipDrawThirdEnemies
 
-        // Adjust x's of sprites past 256.
+        // Adjust x-pos of sprites past 256.
         cmp r8, #0x0
         beq correctDrawThirdEnemiesByte
         cmp r8, #0x18
@@ -982,12 +1050,13 @@ drawThirdEnemies:
             ldr r10, =#0x100
 			add r8, r10, r8
 
+        // Draw sprite at position in struct if displayed.
         correctDrawThirdEnemies:
             mov r1, r8
             mov r2, r9
             bl BitBlit
 
-        // Reset caller saved registers.
+        // Reset caller-saved registers.
         ldr r0, =enemy3
         ldr r1, =enemy3_controls
 		
@@ -999,11 +1068,11 @@ drawThirdEnemies:
         blt drawThirdEnemiesBody
 
 	// Epilogue.
-	pop {r4, r5, r6, r7, r8, r9, r10, r11, pc}
+	pop {r4, r5, r6, r7, r8, r9, r10, pc}
 
 UpdatePos:
-	// Update positions of bitmaps.
-	// r0 - pixmap control ptr.
+	// Update positions of bitmaps (spaceship).
+	// r0 - control ptr.
 	// r1 - pixmap ptr.
 	// Prologue.
 	push {r4, r5, r6, r7, r8, r9, lr}
@@ -1041,6 +1110,7 @@ UpdatePos:
 		sub r1, r5, #15
 		b continueUpdate
 	
+    // Adjust x-pos of spaceship past 256.
 	correctByte:
 		mov r9, r5
 		ldr r1, =#0x10f
@@ -1048,9 +1118,12 @@ UpdatePos:
 		cmp r6, #0xf1
 		beq correctByteNeg
 		b continueUpdate
+
 	correctByteNeg:
 		sub r1, r1, #30
 		b continueUpdate
+    
+    // Prevent from going too far out-of-bounds.
 	rightBoundary:
 		add r1, r5, #0x100
 		cmp r6, #0xf1
@@ -1079,16 +1152,16 @@ UpdatePos:
 	pop {r4, r5, r6, r7, r8, r9, pc}
 
 FireLaserBeam:
-	// Update positions of bitmaps.
+	// Calculate position of laser beams and draw corresponding bitmap.
 	// r0 - pixmap ptr.
-	// r1 - spaceship control ptr.
+	// r1 - control ptr.
 	// Prologue.
-	push {r4, r5, r6, r7, r8, r9, r10, r11, lr}
+	push {r7, r8, r9, lr}
 	
 	// Get spaceship x-pos.
 	ldrb r1, [r1, #PIXMAP_XPOS]
 	
-    // Adjust X-Pos for end screen.
+    // Adjust x-pos after 256.
 	cmp r1, #0x9
 	beq correctLaserBeamByte
 	cmp r1, #0x18
@@ -1108,25 +1181,31 @@ FireLaserBeam:
 
 	correctLaserBeamDraw:
 	
-    // Save r1 x-pos in r7.
+    // Save caller-saved r1 x-pos in r7.
+    // Save caller-saved r2 pixmap in r8.
     mov r7, r1
     mov r8, r2
 
-    // Y-Pos
+    // Set static y-pos.
 	mov r2, #108
 
 	// Draw bitmap.
 	bl BitBlit
 
+    // Calculate collisions with alien structs.
     mov r0, r7
     mov r1, r8
     bl LaserBeamCollision
 
 	// Epilogue.
-	pop {r4, r5, r6, r7, r8, r9, r10, r11, pc}
+	pop {r7, r8, r9, pc}
 
 LaserBeamCollision:
-    push {r4, r5, r6, r7, r8, r9, r10, r11, lr}
+	// Iterate through all three enemy structs and calculate collisions with lasers.
+	// r0 - laser x-pos.
+	// r1 - radiation radius.
+	// Prologue.
+    push {r4, r5, r6, r7, r8, r9, r10, lr}
 
     mov r4, #0
     ldr r5, =enemy1_controls
@@ -1170,6 +1249,13 @@ LaserBeamCollision:
         // Set XVEL to 1 to not draw this enemy again.
         mov r9, #0
         strb r9, [r8, #PIXMAP_XVEL]
+
+        // Increase powerup count.
+        // Need to defeat at least 3 aliens to use the radiation laser.
+        ldr r8, =unlock_powerup
+        ldrb r9, [r8]
+        add r9, r9, #1
+        strb r9, [r8]
 
         no_enemy1_collision:
             add r4, r4, #1
@@ -1222,6 +1308,13 @@ LaserBeamCollision:
         mov r9, #0
         strb r9, [r8, #PIXMAP_XVEL]
 
+        // Increase powerup count.
+        // Need to defeat at least 3 aliens to use the radiation laser.
+        ldr r8, =unlock_powerup
+        ldrb r9, [r8]
+        add r9, r9, #1
+        strb r9, [r8]
+
         no_enemy2_collision:
             add r4, r4, #1
 
@@ -1273,6 +1366,13 @@ LaserBeamCollision:
         // Set XVEL to 1 to not draw this enemy again.
         mov r9, #0
         strb r9, [r8, #PIXMAP_XVEL]
+        
+        // Increase powerup count.
+        // Need to defeat at least 3 aliens to use the radiation laser.
+        ldr r8, =unlock_powerup
+        ldrb r9, [r8]
+        add r9, r9, #1
+        strb r9, [r8]
 
         no_enemy3_collision:
             add r4, r4, #1
@@ -1282,9 +1382,10 @@ LaserBeamCollision:
         blt enemy3_collision_body
 
     // Epilogue.
-    pop {r4, r5, r6, r7, r8, r9, r10, r11, pc}
+    pop {r4, r5, r6, r7, r8, r9, r10, pc}
 
 UpdateEnemyLasers:
+    // Update position of enemy laser volleys.
     // r0 - enemy laser control ptr.
     // r1 - enemy laser pixmap ptr.
     // Prologue.
@@ -1342,6 +1443,7 @@ UpdateEnemyLasers:
 		
 		ldr r0, =enemy_laser_controls
 		ldr r1, =enemy_laser
+
         // Update loop iteration.
         add r4, r4, #1
     enemy_laser_condition:
@@ -1386,13 +1488,20 @@ PlayerCollisions:
         bgt goToNextLaser
 
         // Otherwise, if laser in spaceship, trigger collision.
-        // Set spaceship back to starting point.
+        // Reset spaceship back to starting point.
         ldr r4, =spaceship_control
         mov r5, #160
         mov r6, #224
         strb r5, [r4, #PIXMAP_XPOS]
         strb r6, [r4, #PIXMAP_YPOS]
+
+        // Reset enemies.
         bl ResetEnemies
+
+        // Reset powerup count to 0.
+        ldr r8, =unlock_powerup
+        mov r9, #0
+        strb r9, [r8]
         b goToEpilogue
 
         goToNextLaser:
@@ -1406,8 +1515,11 @@ PlayerCollisions:
         pop {r4, r5, r6, r7, r8, r9, r10, r11, pc}
 
 ResetEnemies:
+    // Reset enemies on player defeat by displaying all again.
+    // Prologue.
     push {r4, r5, r6, r7, r8, r9, lr}
 
+    // Iterate through every enemy struct and set display to 1.
     mov r4, #0
     ldr r5, =enemy1_controls
 
